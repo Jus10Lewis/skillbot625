@@ -9,7 +9,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-    title: "sKillbot",
+    title: "sKILLbot",
     description: "AI Teaching tools for the modern teacher",
 };
 
