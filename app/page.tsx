@@ -1,6 +1,7 @@
 import CallToAction from "@/components/CallToAction";
 import TutorCard from "@/components/TutorCard";
 import TutorsList from "@/components/TutorsList";
+import { recentSessions } from "@/constants";
 
 const Page = () => {
     return (
@@ -33,7 +34,11 @@ const Page = () => {
                 />
             </section>
             <section className="home-section">
-                <TutorsList />
+                <TutorsList
+                    title="Recently Completed Sessions"
+                    tutors={recentSessions}
+                    classNames="w-2/3 max-lg:w-full"
+                />
                 <CallToAction />
             </section>
         </main>

@@ -19,7 +19,7 @@ const TutorCard = ({
     color,
 }: TutorCardProps) => {
     return (
-        <article className="Tutor-card" style={{ backgroundColor: color }}>
+        <article className="tutor-card" style={{ backgroundColor: color }}>
             <div className="flex justify-between items-center">
                 <div className="subject-badge">{subject}</div>
                 <button className="tutor-bookmark">
