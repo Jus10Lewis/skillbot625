@@ -11,6 +11,9 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
     title: "sKILLbot",
     description: "AI Teaching tools for the modern teacher",
+    icons: {
+        icon: "/favicon.png",
+    },
 };
 
 export default function RootLayout({
