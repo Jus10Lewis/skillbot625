@@ -2,11 +2,26 @@ import CallToAction from "@/components/CallToAction";
 import TutorCard from "@/components/TutorCard";
 import TutorsList from "@/components/TutorsList";
 import { recentSessions } from "@/constants";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 const Page = () => {
     return (
         <main className="mb-15">
-            <h1 className="text-2xl ">Popular Tutors</h1>
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-2xl">Popular Tutors</h1>
+                <div className="text-sm">
+                    <SignedOut>
+                        <span className="text-gray-600">
+                            Sign in to access personalized tutors
+                        </span>
+                    </SignedOut>
+                    <SignedIn>
+                        <span className="text-green-600">
+                            ✓ Signed in - Full access enabled
+                        </span>
+                    </SignedIn>
+                </div>
+            </div>
             <section className="home-section">
                 <TutorCard
                     id="123"
