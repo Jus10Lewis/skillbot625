@@ -5,8 +5,8 @@ import { recentSessions } from "@/constants";
 
 const Page = () => {
     return (
-        <main>
-            <h1 className="text-2xl underline">Popular Tutors</h1>
+        <main className="mb-15">
+            <h1 className="text-2xl ">Popular Tutors</h1>
             <section className="home-section">
                 <TutorCard
                     id="123"

@@ -6,7 +6,7 @@
 // };
 
 enum Subject {
-    maths = "maths",
+    math = "math",
     language = "language",
     science = "science",
     history = "history",
