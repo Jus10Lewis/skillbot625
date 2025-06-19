@@ -23,6 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { subjects } from "@/constants";
 import { Textarea } from "./ui/textarea";
+import { createTutor } from "@/lib/actions/tutor.actions";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Tutor name is required" }),
@@ -48,10 +50,14 @@ const TutorForm = () => {
     });
 
     // 2. Define a submit handler.
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        const tutor = await createTutor(values);
+        if (tutor) {
+            redirect(`/tutors/${tutor.id}`);
+        } else {
+            console.error("Failed to create tutor");
+            redirect("/");
+        }
     };
 
     return (
@@ -102,24 +108,6 @@ const TutorForm = () => {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                            </FormControl>
-
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Tutor Name</FormLabel>
-                            <FormControl>
-                                <Input
-                                    placeholder="John Doe"
-                                    {...field}
-                                    className="input"
-                                />
                             </FormControl>
 
                             <FormMessage />
