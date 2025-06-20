@@ -5,11 +5,11 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 interface TutorSessionPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 const TutorSession = async ({ params }: TutorSessionPageProps) => {
-    const { id } = params;
+    const { id } = await params;
     const { name, subject, topic, duration } = await getTutor(id);
     const user = await currentUser();
 
