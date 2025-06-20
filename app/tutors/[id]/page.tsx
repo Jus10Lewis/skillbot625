@@ -10,7 +10,7 @@ interface TutorSessionPageProps {
 
 const TutorSession = async ({ params }: TutorSessionPageProps) => {
     const { id } = params;
-    const { name, subject, topic, title, duration } = await getTutor(id);
+    const { name, subject, topic, duration } = await getTutor(id);
     const user = await currentUser();
 
     if (!user) {
