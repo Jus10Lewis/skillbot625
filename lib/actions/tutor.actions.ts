@@ -46,3 +46,16 @@ export const getAllTutors = async ({
 
     return tutors;
 };
+
+export const getTutor = async (id: string) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("tutors")
+        .select("*")
+        .eq("id", id);
+    if (error) {
+        return console.error("Error fetching tutor:", error);
+    }
+
+    return data?.[0] || null;
+};
