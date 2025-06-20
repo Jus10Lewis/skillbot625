@@ -1,3 +1,5 @@
+import SearchInput from "@/components/SearchInput";
+import SubjectFilter from "@/components/SubjectFilter";
 import TutorCard from "@/components/TutorCard";
 import { getAllTutors } from "@/lib/actions/tutor.actions";
 import { getSubjectColor } from "@/lib/utils";
@@ -15,7 +17,10 @@ const TutorsLibrary = async ({ searchParams }: SearchParams) => {
         <main>
             <section className="flex justify-between gap-4 max-sm:flex-col">
                 <h1>Tutors Library</h1>
-                <div className="flex gap-4">Filters</div>
+                <div className="flex gap-4">
+                    <SearchInput />
+                    <SubjectFilter />
+                </div>
             </section>
             <section className="tutors-grid">
                 {tutors.map((tutor) => (

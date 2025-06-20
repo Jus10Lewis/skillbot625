@@ -4,7 +4,10 @@ import Link from "next/link";
 const CallToAction = () => {
     return (
         <section className="cta-section">
-            <div className="cta-badge">Start learning your way.</div>
+            <Link href="/tutors/new">
+                <div className="cta-badge">Start learning your way.</div>
+            </Link>
+
             <h2 className="text-3xl font-bold">
                 Build a personalized learning tutor
             </h2>
