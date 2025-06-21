@@ -1,3 +1,4 @@
+import TutorComponent from "@/components/TutorComponent";
 import { getTutor } from "@/lib/actions/tutor.actions";
 import { getSubjectColor } from "@/lib/utils";
 import { currentUser } from "@clerk/nextjs/server";
@@ -10,7 +11,8 @@ interface TutorSessionPageProps {
 
 const TutorSession = async ({ params }: TutorSessionPageProps) => {
     const { id } = await params;
-    const { name, subject, topic, duration } = await getTutor(id);
+    const tutor = await getTutor(id);
+    const { name, subject, topic, duration } = tutor;
     const user = await currentUser();
 
     if (!user) {
@@ -51,6 +53,13 @@ const TutorSession = async ({ params }: TutorSessionPageProps) => {
                     {duration} minutes
                 </div>
             </article>
+            <TutorComponent
+                {...tutor}
+                // { name, subject, topic, duration }
+                tutorId={id}
+                userName={user.firstName || user.username}
+                userImage={user.imageUrl || ""}
+            />
         </main>
     );
 };
