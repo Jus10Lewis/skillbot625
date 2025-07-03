@@ -15,7 +15,7 @@ enum CallStatus {
 }
 
 const TutorComponent = ({
-    tutorId,
+    // tutorId,
     subject,
     topic,
     name,
@@ -43,9 +43,9 @@ const TutorComponent = ({
         }
     }, [isSpeaking, lottieRef]);
 
-    const handleCallStart = () => {
-        setCallStatus(CallStatus.CONNECTING);
-    };
+    // const handleCallStart = () => {
+    //     setCallStatus(CallStatus.CONNECTING);
+    // };
     useEffect(() => {
         const onCallStart = () => {
             setCallStatus(CallStatus.ACTIVE);
