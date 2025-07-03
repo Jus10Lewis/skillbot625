@@ -15,12 +15,12 @@ import {
 const SubjectFilter = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const query = searchParams.get("subject") || "";
+    const query = searchParams.get("subject") || "all";
     const [subject, setSubject] = useState(query);
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams.toString());
-        if (subject === "all") {
+        if (subject === "all" || subject === "") {
             params.delete("subject");
         } else {
             params.set("subject", subject);
