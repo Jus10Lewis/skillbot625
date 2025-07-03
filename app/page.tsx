@@ -1,10 +1,14 @@
 import CallToAction from "@/components/CallToAction";
 import TutorCard from "@/components/TutorCard";
 import TutorsList from "@/components/TutorsList";
-import { recentSessions } from "@/constants";
+import { getAllTutors, getRecentSessions } from "@/lib/actions/tutor.actions";
+import { getSubjectColor } from "@/lib/utils";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
-const Page = () => {
+const Page = async () => {
+    const tutors = await getAllTutors({ limit: 3 });
+    const recentSessionTutors = await getRecentSessions(10);
+
     return (
         <main className="mb-15">
             <div className="flex items-center justify-between mb-6">
@@ -23,35 +27,18 @@ const Page = () => {
                 </div>
             </div>
             <section className="home-section">
-                <TutorCard
-                    id="123"
-                    name="Neura the Brainy Explorer"
-                    topic="Neural Network of the Brain"
-                    subject="Science"
-                    duration={45}
-                    color="#ffda6e"
-                />
-                <TutorCard
-                    id="456"
-                    name="Countsy the Math Wizard"
-                    topic="Derivatives and Integrals"
-                    subject="Math"
-                    duration={30}
-                    color="#e5d0ff"
-                />
-                <TutorCard
-                    id="789"
-                    name="Verba the Vocabulary Virtuoso"
-                    topic="Advanced Vocabulary"
-                    subject="English"
-                    duration={30}
-                    color="#bde7ff"
-                />
+                {tutors.map((tutor) => (
+                    <TutorCard
+                        key={tutor.id}
+                        {...tutor}
+                        color={getSubjectColor(tutor.subject)}
+                    />
+                ))}
             </section>
             <section className="home-section">
                 <TutorsList
                     title="Recently Completed Sessions"
-                    tutors={recentSessions}
+                    tutors={recentSessionTutors}
                     classNames="w-2/3 max-lg:w-full"
                 />
                 <CallToAction />

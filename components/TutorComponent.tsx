@@ -6,6 +6,7 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import soundWaves from "@/constants/soundwaves.json";
+import { addToSessionHistory } from "@/lib/actions/tutor.actions";
 
 enum CallStatus {
     INACTIVE = "INACTIVE",
@@ -15,7 +16,7 @@ enum CallStatus {
 }
 
 const TutorComponent = ({
-    // tutorId,
+    tutorId,
     subject,
     topic,
     name,
@@ -52,6 +53,7 @@ const TutorComponent = ({
         };
         const onCallEnd = () => {
             setCallStatus(CallStatus.FINISHED);
+            addToSessionHistory(tutorId);
         };
         const onMessage = (message: Message) => {
             if (
@@ -91,7 +93,7 @@ const TutorComponent = ({
             vapi.off("speech-start", onSpeechStart);
             vapi.off("speech-end", onSpeechEnd);
         };
-    }, []);
+    }, [tutorId]);
 
     const toggleMicrophone = () => {
         const isMuted = vapi.isMuted();
@@ -122,6 +124,8 @@ const TutorComponent = ({
         setCallStatus(CallStatus.FINISHED);
         vapi.stop();
     };
+
+    // TODO: Add the ability to make changes to the tutor once it is created. e.g. Fix a spelling error
 
     return (
         <section className="flex flex-col h-[70vh]">

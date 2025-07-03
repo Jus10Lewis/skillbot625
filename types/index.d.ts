@@ -71,7 +71,7 @@ interface SavedMessage {
 }
 
 interface TutorComponentProps {
-    TutorId: string;
+    tutorId: string;
     subject: string;
     topic: string;
     name: string;
