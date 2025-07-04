@@ -112,3 +112,34 @@ export const getUserTutors = async (userId: string) => {
     }
     return data || [];
 };
+
+export const newTutorPermissions = async () => {
+    const { userId, has } = await auth();
+    const supabase = createSupabaseClient();
+
+    let limit = 0;
+
+    if (has({ plan: "pro" })) {
+        return true;
+    } else if (has({ feature: "3_tutor_limit" })) {
+        limit = 3;
+    } else if (has({ feature: "10_tutor_limit" })) {
+        limit = 10;
+    }
+
+    const { data, error } = await supabase
+        .from("tutors")
+        .select("id", { count: "exact" })
+        .eq("author", userId);
+
+    if (error) {
+        throw new Error(error.message);
+    }
+    const tutorCount = data?.length || 0;
+
+    if (tutorCount >= limit) {
+        return false;
+    } else {
+        return true;
+    }
+};
