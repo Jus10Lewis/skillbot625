@@ -114,9 +114,10 @@ const TutorComponent = ({
             serverMessages: [],
         };
 
-        // FIXME: This is a workaround for the TS error in VAPI SDK
-        // @ts-expect-error - YouTube guy thinks: This is a TS error.
+        // FIXME:
+        // JSMastery thinks: This is a TS error.
         // GPT thinks: VAPI type definitions are incomplete for assistantOverrides parameter
+        // @ts-expect-error - This is a workaround for the TS error in VAPI SDK
         vapi.start(configureAssistant(voice, style), assistantOverrides);
     };
 
@@ -125,7 +126,8 @@ const TutorComponent = ({
         vapi.stop();
     };
 
-    // TODO: Add the ability to make changes to the tutor once it is created. e.g. Fix a spelling error
+    // TODO: Add the ability to make changes to the tutor once it is created.
+    // e.g. Fix a spelling error
 
     return (
         <section className="flex flex-col h-[70vh]">

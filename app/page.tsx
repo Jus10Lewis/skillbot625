@@ -6,7 +6,7 @@ import { getSubjectColor } from "@/lib/utils";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 const Page = async () => {
-    const tutors = await getAllTutors({ limit: 3 });
+    const topThreeTutors = await getAllTutors({ limit: 3 });
     const recentSessionTutors = await getRecentSessions(10);
 
     return (
@@ -27,7 +27,7 @@ const Page = async () => {
                 </div>
             </div>
             <section className="home-section">
-                {tutors.map((tutor) => (
+                {topThreeTutors.map((tutor) => (
                     <TutorCard
                         key={tutor.id}
                         {...tutor}
@@ -40,6 +40,7 @@ const Page = async () => {
                     title="Recently Completed Sessions"
                     tutors={recentSessionTutors}
                     classNames="w-2/3 max-lg:w-full"
+                    showDuplicates={false}
                 />
                 <CallToAction />
             </section>

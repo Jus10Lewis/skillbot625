@@ -3,6 +3,18 @@
 import { auth } from "@clerk/nextjs/server";
 import { createSupabaseClient } from "../supabase";
 
+interface TutorData {
+    id: string;
+    name: string;
+    subject: string;
+    topic: string;
+    duration: number;
+    style?: string;
+    voice?: string;
+    author?: string;
+    created_at?: string;
+}
+
 export const createTutor = async (formData: CreateTutor) => {
     const { userId: author } = await auth();
     const supabase = createSupabaseClient();
@@ -75,21 +87,45 @@ export const getRecentSessions = async (limit = 10) => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from("session_history")
-        .select(`tutors:tutor_id (*)`)
+        .select(
+            `
+            id,
+            tutors:tutor_id (*)
+        `
+        )
         .order("created_at", { ascending: false })
         .limit(limit);
 
     if (error) {
         throw new Error(error.message);
     }
-    return data.map(({ tutors }) => tutors);
+
+    return data
+        .filter(({ tutors }) => tutors) // Just check if tutors exists (it's an object, not array)
+        .map(({ tutors, id }) => {
+            // tutors is an object, not an array
+            const tutor = tutors as unknown as TutorData;
+            return {
+                id: tutor.id,
+                name: tutor.name,
+                subject: tutor.subject,
+                topic: tutor.topic,
+                duration: tutor.duration,
+                session_history_id: id,
+            };
+        });
 };
 
 export const getUserSessions = async (userId: string, limit = 10) => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from("session_history")
-        .select(`tutors:tutor_id (*)`)
+        .select(
+            `
+            id,
+            tutors:tutor_id (*)
+        `
+        )
         .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(limit);
@@ -97,7 +133,21 @@ export const getUserSessions = async (userId: string, limit = 10) => {
     if (error) {
         throw new Error(error.message);
     }
-    return data.map(({ tutors }) => tutors);
+
+    return data
+        .filter(({ tutors }) => tutors) // Just check if tutors exists
+        .map(({ tutors, id }) => {
+            // tutors is an object, not an array
+            const tutor = tutors as unknown as TutorData;
+            return {
+                id: tutor.id,
+                name: tutor.name,
+                subject: tutor.subject,
+                topic: tutor.topic,
+                duration: tutor.duration,
+                session_history_id: id,
+            };
+        });
 };
 
 export const getUserTutors = async (userId: string) => {

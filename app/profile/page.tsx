@@ -17,7 +17,7 @@ const Profile = async () => {
         return; // This helps TypeScript understand
     }
 
-    const tutors = await getUserTutors(user.id);
+    const allUserTutors = await getUserTutors(user.id);
     const sessionHistory = await getUserSessions(user.id);
 
     return (
@@ -64,7 +64,7 @@ const Profile = async () => {
                                 height={22}
                             />
                             <p className="text-2xl font-bold">
-                                {tutors.length}
+                                {allUserTutors.length}
                             </p>
                         </div>
                         <div>Tutors Created</div>
@@ -85,10 +85,10 @@ const Profile = async () => {
                 </AccordionItem>
                 <AccordionItem value="tutors">
                     <AccordionTrigger className="text-2xl font-bold">
-                        My Tutors {`(${tutors.length})`}
+                        My Tutors {`(${allUserTutors.length})`}
                     </AccordionTrigger>
                     <AccordionContent>
-                        <TutorsList title="My Tutors" tutors={tutors} />
+                        <TutorsList title="My Tutors" tutors={allUserTutors} />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

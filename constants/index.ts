@@ -19,6 +19,9 @@ export const subjectsColors = {
 export const voices = {
     male: { casual: "2BJW5coyhAzSr8STdHbE", formal: "c6SfcYrb2t09NHXiT80T" },
     female: { casual: "ZIlrSGI4jZqobxRKprJz", formal: "sarah" },
+    // TODO: It would be fun to have multiple voices to select from with individual
+    // names like Bob, Sarah, Jane. And have a quick voice recording demo to play a
+    // sample of when choosing.
 };
 
 export const recentSessions = [
