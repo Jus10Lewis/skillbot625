@@ -40,6 +40,7 @@ interface GetAllTutors {
     page?: number;
     subject?: string | string[];
     topic?: string | string[];
+    bookmarked?: boolean;
 }
 
 interface BuildClient {

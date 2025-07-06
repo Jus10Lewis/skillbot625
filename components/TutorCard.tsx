@@ -1,5 +1,11 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import {
+    addToBookmarks,
+    removeFromBookmarks,
+} from "@/lib/actions/tutor.actions";
 
 interface TutorCardProps {
     id: string;
@@ -8,6 +14,7 @@ interface TutorCardProps {
     subject: string;
     duration: number;
     color: string;
+    bookmarked?: boolean;
 }
 
 const TutorCard = ({
@@ -17,14 +24,53 @@ const TutorCard = ({
     subject,
     duration,
     color,
+    bookmarked = false,
 }: TutorCardProps) => {
+    const [isBookmarked, setIsBookmarked] = useState(bookmarked);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleBookmarkToggle = async () => {
+        setIsLoading(true);
+        try {
+            if (isBookmarked) {
+                await removeFromBookmarks(id);
+                setIsBookmarked(false);
+            } else {
+                await addToBookmarks(id);
+                setIsBookmarked(true);
+            }
+        } catch (error) {
+            console.error("Error toggling bookmark:", error);
+            // Reset the optimistic update if there was an error
+            setIsBookmarked(bookmarked);
+            // Optionally show a toast notification here
+            alert(
+                `Failed to ${
+                    isBookmarked ? "remove" : "add"
+                } bookmark. Please try again.`
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <article className="tutor-card" style={{ backgroundColor: color }}>
             <div className="flex justify-between items-center">
-                <div className="subject-badge">{subject}</div>
-                <button className="tutor-bookmark">
+                <div className="subject-badge  min-w-[85px] text-center">
+                    {subject}
+                </div>
+                <button
+                    className="tutor-bookmark"
+                    onClick={handleBookmarkToggle}
+                    disabled={isLoading}
+                >
                     <Image
-                        src="/icons/bookmark.svg"
+                        src={
+                            isBookmarked
+                                ? "/icons/bookmark-filled.svg"
+                                : "/icons/bookmark.svg"
+                        }
                         alt="Bookmark Icon"
                         width={12.5}
                         height={15}
@@ -42,7 +88,10 @@ const TutorCard = ({
                 />
                 <p className="text-sm">{duration} minutes</p>
             </div>
-            <Link href={`/tutors/${id}`} className="tutor-card-link">
+            <Link
+                href={`/all-community-tutors/${id}`}
+                className="tutor-card-link"
+            >
                 <button className="btn-primary w-full justify-center">
                     Launch Tutor
                 </button>

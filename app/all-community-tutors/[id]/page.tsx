@@ -19,7 +19,7 @@ const TutorSession = async ({ params }: TutorSessionPageProps) => {
         redirect("/sign-in");
     }
     if (!name) {
-        redirect("/tutors");
+        redirect("/community");
     }
 
     return (

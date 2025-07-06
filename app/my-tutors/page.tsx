@@ -5,7 +5,11 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getUserSessions, getUserTutors } from "@/lib/actions/tutor.actions";
+import {
+    getUserSessions,
+    getUserTutors,
+    // getBookmarkedTutors,
+} from "@/lib/actions/tutor.actions";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -19,6 +23,7 @@ const Profile = async () => {
 
     const allUserTutors = await getUserTutors(user.id);
     const sessionHistory = await getUserSessions(user.id);
+    // const bookmarkedTutors = await getBookmarkedTutors(user.id);
 
     return (
         <main className="min-lg:w-3/4">
@@ -91,6 +96,17 @@ const Profile = async () => {
                         <TutorsList title="My Tutors" tutors={allUserTutors} />
                     </AccordionContent>
                 </AccordionItem>
+                {/* <AccordionItem value="bookmarked">
+                    <AccordionTrigger className="text-2xl font-bold">
+                        Bookmarked Tutors {`(${bookmarkedTutors.length})`}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <TutorsList
+                            title="Bookmarked Tutors"
+                            tutors={bookmarkedTutors}
+                        />
+                    </AccordionContent>
+                </AccordionItem> */}
             </Accordion>
         </main>
     );

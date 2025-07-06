@@ -115,7 +115,7 @@ const TutorComponent = ({
         };
 
         // FIXME:
-        // JSMastery thinks: This is a TS error.
+        // TS error.
         // GPT thinks: VAPI type definitions are incomplete for assistantOverrides parameter
         // @ts-expect-error - This is a workaround for the TS error in VAPI SDK
         vapi.start(configureAssistant(voice, style), assistantOverrides);

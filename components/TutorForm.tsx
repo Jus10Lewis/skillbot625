@@ -53,7 +53,7 @@ const TutorForm = () => {
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         const tutor = await createTutor(values);
         if (tutor) {
-            redirect(`/tutors/${tutor.id}`);
+            redirect(`/all-community-tutos/${tutor.id}`);
         } else {
             console.error("Failed to create tutor");
             redirect("/");

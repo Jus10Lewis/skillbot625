@@ -9,10 +9,12 @@ const Page = async () => {
     const topThreeTutors = await getAllTutors({ limit: 3 });
     const recentSessionTutors = await getRecentSessions(10);
 
+    // TODO: Popular tutors section is only showing the most recently created tutors
+    // This could be changed to show the most popular tutors based on user interactions, ratings, or completion counts
     return (
         <main className="mb-15">
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-2xl">Popular Tutors</h1>
+                <h1 className="text-2xl">Popular Community Tutors</h1>
                 <div className="text-sm">
                     <SignedOut>
                         <span className="text-gray-600">
@@ -32,12 +34,13 @@ const Page = async () => {
                         key={tutor.id}
                         {...tutor}
                         color={getSubjectColor(tutor.subject)}
+                        bookmarked={tutor.bookmarked}
                     />
                 ))}
             </section>
             <section className="home-section">
                 <TutorsList
-                    title="Recently Completed Sessions"
+                    title="Recently Completed Community Sessions"
                     tutors={recentSessionTutors}
                     classNames="w-2/3 max-lg:w-full"
                     showDuplicates={false}
