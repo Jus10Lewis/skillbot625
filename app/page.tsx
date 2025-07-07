@@ -22,9 +22,7 @@ const Page = async () => {
                         </span>
                     </SignedOut>
                     <SignedIn>
-                        <span className="text-green-600">
-                            ✓ Signed in - Full access enabled
-                        </span>
+                        <span className="text-green-600">✓ Signed in</span>
                     </SignedIn>
                 </div>
             </div>

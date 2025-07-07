@@ -24,12 +24,6 @@ const Navbar = () => {
                     </SignInButton>
                 </SignedOut>
                 <SignedIn>
-                    <Link
-                        href="/dashboard"
-                        className="text-blue-600 hover:text-blue-800"
-                    >
-                        Dashboard
-                    </Link>
                     <UserButton />
                 </SignedIn>
             </div>

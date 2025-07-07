@@ -8,6 +8,7 @@ const navItems = [
     { href: "/", label: "Home" },
     { href: "/all-community-tutors", label: "Community" },
     { href: "/my-tutors", label: "My Tutors" },
+    { href: "/subscription", label: "Pricing" },
 ];
 
 const NavItems = () => {
