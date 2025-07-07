@@ -1,7 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import NavItems from "./NavItems";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+    SignInButton,
+    SignUpButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+} from "@clerk/nextjs";
 
 const Navbar = () => {
     return (
@@ -17,11 +23,17 @@ const Navbar = () => {
             <div className="flex items-center gap-8">
                 <NavItems />
                 <SignedOut>
+                    {/* FIXME: SignIn interface should have a link for:
+                     "Don’t have an account? Sign up" */}
                     <SignInButton>
                         <button className="text-blue-600 hover:text-blue-800">
                             Sign In
                         </button>
                     </SignInButton>
+                    {/* FIXME: If you click the SignInButton first, you can't switch to SignUpButton */}
+                    <SignUpButton>
+                        <button className="btn-primary">Try for Free</button>
+                    </SignUpButton>
                 </SignedOut>
                 <SignedIn>
                     <UserButton />
