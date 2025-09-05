@@ -16,9 +16,17 @@ export default function TeacherDashboardPlaceholder() {
                 auto-grading, and analytics. In the meantime, you can start with
                 AI Tutors to explore our learning experience.
             </p>
-            <Link href="/ai-tutors" className="btn-primary inline-block">
-                Start with AI Tutors
-            </Link>
+            <div className="flex gap-3">
+                <Link href="/ai-tutors" className="btn-primary inline-block">
+                    Start with AI Tutors
+                </Link>
+                <Link
+                    href="/teacher/grading"
+                    className="btn-primary inline-block"
+                >
+                    Go to Grading
+                </Link>
+            </div>
         </main>
     );
 }

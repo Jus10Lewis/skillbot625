@@ -6,7 +6,7 @@
 
 :root {
     /* --primary: oklch(0.205 0 0); */
-    --primary: hsl(249, 83%, 53%);
+    --primary: #4224eb;
 
     /* --cta: #2c2c2c; */
     --cta: #008967;

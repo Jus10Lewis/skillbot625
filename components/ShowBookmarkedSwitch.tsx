@@ -23,7 +23,11 @@ const ShowBookmarkedSwitch = () => {
 
     return (
         <div className="flex items-center space-x-2">
-            <Switch checked={bookmarked} onCheckedChange={setBookmarked} />
+            <Switch
+                checked={bookmarked}
+                onCheckedChange={setBookmarked}
+                className="data-[state=checked]:bg-primary data-[state=unchecked]:bg-gray-500"
+            />
             <label className="text-sm font-medium">Show bookmarked</label>
         </div>
     );
