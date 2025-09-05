@@ -11,6 +11,9 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+    metadataBase: new URL(
+        process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+    ),
     title: "sKILLbot",
     description: "AI Teaching tools for the modern teacher",
 };
@@ -21,7 +24,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <ClerkProvider appearance={{ variables: { colorPrimary: "#fe5933" } }}>
+        // TODO: Need to switch Clerk to production mode. It's currently in development mode.
+        <ClerkProvider appearance={{ variables: { colorPrimary: "#4224eb" } }}>
             <html lang="en">
                 <body
                     className={`${bricolage.variable} antialiased`}

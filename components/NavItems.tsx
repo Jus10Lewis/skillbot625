@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/", label: "Home" },
+    { href: "/ai-tutors", label: "AI Tutors" },
+    { href: "/teacher-dashboard", label: "Teacher Dashboard" },
     { href: "/all-community-tutors", label: "Community" },
     { href: "/my-tutors", label: "My Tutors" },
     { href: "/subscription", label: "Pricing" },
