@@ -1,32 +1,28 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build Next.js app",
-			"type": "shell",
-			"command": "npm run build",
-			"problemMatcher": [
-				"$tsc",
-				"$eslint-stylish"
-			]
-		},
-		{
-			"label": "Build Next.js app",
-			"type": "shell",
-			"command": "npm run build",
-			"problemMatcher": [
-				"$tsc",
-				"$eslint-stylish"
-			]
-		},
-		{
-			"label": "Build Next.js app",
-			"type": "shell",
-			"command": "npm run build",
-			"problemMatcher": [
-				"$tsc",
-				"$eslint-stylish"
-			]
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Next.js app",
+            "type": "shell",
+            "command": "npm run build",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$tsc", "$eslint-stylish"]
+        },
+        {
+            "label": "Dev Next.js app",
+            "type": "shell",
+            "command": "npm run dev"
+        },
+        {
+            "label": "Lint",
+            "type": "shell",
+            "command": "npm run lint",
+            "problemMatcher": ["$eslint-stylish"]
+        },
+        {
+            "label": "Start Next.js (production)",
+            "type": "shell",
+            "command": "npm run start"
+        }
+    ]
 }

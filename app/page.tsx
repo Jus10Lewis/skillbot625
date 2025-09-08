@@ -38,10 +38,7 @@ export default function LandingPage() {
                             <Link href="/ai-tutors" className="btn-primary">
                                 Try AI Tutors
                             </Link>
-                            <Link
-                                href="/teacher-dashboard"
-                                className="btn-outline"
-                            >
+                            <Link href="/teacher" className="btn-outline">
                                 Teacher Dashboard
                             </Link>
                         </div>
@@ -154,7 +151,7 @@ export default function LandingPage() {
                     <nav className="flex gap-4 text-sm text-muted-foreground">
                         <Link href="/">Home</Link>
                         <Link href="/ai-tutors">AI Tutors</Link>
-                        <Link href="/teacher-dashboard">Teacher Dashboard</Link>
+                        <Link href="/teacher">Teacher Dashboard</Link>
                         <Link href="#">Privacy</Link>
                         <Link href="#">Terms</Link>
                     </nav>
