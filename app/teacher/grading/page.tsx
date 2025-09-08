@@ -1,6 +1,9 @@
 "use client";
+// Usage: Set OPENAI_API_KEY in .env.local, then use this page to submit the grading form.
+// This page posts to /api/grade and renders the structured JSON results.
 
 import { useEffect, useMemo, useState } from "react";
+import type { GradeRequest, GradeResponse, ApiError } from "@/types/grading";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -26,18 +29,19 @@ import {
 
 const LANGUAGE_OPTIONS = ["Python", "JavaScript", "Java", "C++"] as const;
 
-const studentCodeMissingMsg =
-    "You have not submitted the proper code. If you're ready, please submit the student's code, and I'll start the grading process according to the provided rubric.";
+// Student code can be empty; server/prompt will handle missing-code behavior.
 
 const Schema = z.object({
     instructions: z.string().trim().min(1, "This field is required."),
     rubric: z.string().trim().min(1, "This field is required."),
-    studentCode: z.string().trim().min(1, studentCodeMissingMsg),
+    // Optional per requirements; allow empty string or undefined.
+    studentCode: z.string().optional(),
     language: z.enum(LANGUAGE_OPTIONS),
     dataInput: z.string(),
 });
 
-type FormValues = z.infer<typeof Schema>;
+// Use the input type for React Hook Form to align with resolver generics
+type FormValues = z.input<typeof Schema>;
 
 const STORAGE_KEY = "gradingForm.v1";
 
@@ -77,7 +81,9 @@ export default function GradingPage() {
 
     const { watch, formState, handleSubmit, reset, control } = form;
     const { isValid, isSubmitting } = formState;
-    const [notice, setNotice] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<GradeResponse | null>(null);
 
     // Persist to localStorage when values change
     const watched = watch();
@@ -103,14 +109,45 @@ export default function GradingPage() {
         watched.dataInput,
     ]);
 
-    const onSubmit = () => {
-        // Client-side only: no network. Show notice.
-        setNotice("Ready to grade — backend not implemented yet.");
+    const onSubmit = async (values: FormValues) => {
+        setError(null);
+        setResult(null);
+        setLoading(true);
+        const body: GradeRequest = {
+            language: values.language,
+            instructions: values.instructions,
+            dataInput: values.dataInput || "",
+            rubric: values.rubric,
+            studentCode: values.studentCode || "",
+        };
+        try {
+            const res = await fetch("/api/grade", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+            if (!res.ok) {
+                const err = (await res
+                    .json()
+                    .catch(() => null)) as ApiError | null;
+                setError(
+                    err?.error ||
+                        `Request failed with status ${res.status}. Please try again.`
+                );
+                return;
+            }
+            const data = (await res.json()) as GradeResponse;
+            setResult(data);
+        } catch {
+            setError("Network error. Please check your connection and retry.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const onInvalid = () => {
         // If studentCode invalid, ensure our exact message is visible (it already is via schema)
-        setNotice(null);
+        setError(null);
     };
 
     const clearAll = () => {
@@ -126,7 +163,8 @@ export default function GradingPage() {
         } catch {
             // ignore
         }
-        setNotice(null);
+        setError(null);
+        setResult(null);
     };
 
     return (
@@ -135,17 +173,17 @@ export default function GradingPage() {
                 <header className="mb-6">
                     <h1 className="mb-2">Grading</h1>
                     <p className="text-muted-foreground">
-                        Fill in the details below. This page validates inputs
-                        only and makes no network requests.
+                        Fill in the details below and submit to grade with
+                        OpenAI.
                     </p>
                 </header>
 
-                {notice && (
+                {error && (
                     <div
-                        role="status"
-                        className="mb-4 rounded-md border border-border bg-secondary px-4 py-3 text-sm"
+                        role="alert"
+                        className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
                     >
-                        {notice}
+                        {error}
                     </div>
                 )}
 
@@ -204,7 +242,8 @@ export default function GradingPage() {
                                 <FormItem>
                                     <FormLabel>Student Code</FormLabel>
                                     <FormDescription>
-                                        Required. Paste the student code.
+                                        Optional. Paste the student code (can be
+                                        empty).
                                     </FormDescription>
                                     <FormControl>
                                         <Textarea
@@ -280,10 +319,12 @@ export default function GradingPage() {
                         <div className="flex items-center gap-3 pt-2">
                             <Button
                                 type="submit"
-                                disabled={!isValid || isSubmitting}
-                                aria-disabled={!isValid || isSubmitting}
+                                disabled={!isValid || isSubmitting || loading}
+                                aria-disabled={
+                                    !isValid || isSubmitting || loading
+                                }
                             >
-                                Grade
+                                {loading ? "Grading…" : "Grade"}
                             </Button>
                             <Button
                                 type="button"
@@ -295,6 +336,141 @@ export default function GradingPage() {
                         </div>
                     </form>
                 </Form>
+
+                {/* Results */}
+                {result && (
+                    <section className="mt-8 space-y-4">
+                        <div className="rounded-md border p-4">
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                                <div className="font-medium">Total</div>
+                                <div className="text-sm text-muted-foreground">
+                                    {result.total.earned} / {result.total.max} (
+                                    {Math.round(result.total.percentage)}%)
+                                </div>
+                            </div>
+                            <p className="mt-2 text-sm">{result.message}</p>
+                        </div>
+
+                        {Array.isArray(result.sections) &&
+                            result.sections.length > 0 && (
+                                <div className="grid gap-3">
+                                    {result.sections.map((s) => (
+                                        <div
+                                            key={s.id}
+                                            className="rounded-md border p-4"
+                                        >
+                                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                                                <div className="font-semibold">
+                                                    {s.title}
+                                                </div>
+                                                <div className="text-sm text-muted-foreground">
+                                                    {s.score} / {s.maxPoints}
+                                                </div>
+                                            </div>
+                                            <p className="mt-2 text-sm whitespace-pre-wrap">
+                                                {s.comments}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                        <div className="rounded-md border p-4">
+                            <h2 className="font-semibold">Summary</h2>
+                            <p className="mt-2 text-sm whitespace-pre-wrap">
+                                {result.summary}
+                            </p>
+                        </div>
+
+                        {result.suggestions &&
+                            result.suggestions.length > 0 && (
+                                <div className="rounded-md border p-4">
+                                    <h3 className="font-semibold">
+                                        Suggestions
+                                    </h3>
+                                    <ul className="mt-2 list-disc pl-6 text-sm space-y-1">
+                                        {result.suggestions.map((sug, idx) => (
+                                            <li key={idx}>{sug}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                        {/* Raw JSON output */}
+                        <div className="rounded-md border p-4">
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                                <h3 className="font-semibold">Raw JSON</h3>
+                                <div className="flex gap-2">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={async () => {
+                                            try {
+                                                await navigator.clipboard.writeText(
+                                                    JSON.stringify(
+                                                        result,
+                                                        null,
+                                                        2
+                                                    )
+                                                );
+                                                setError(null);
+                                            } catch {
+                                                setError(
+                                                    "Could not copy to clipboard."
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Copy JSON
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                            try {
+                                                const blob = new Blob(
+                                                    [
+                                                        JSON.stringify(
+                                                            result,
+                                                            null,
+                                                            2
+                                                        ),
+                                                    ],
+                                                    { type: "application/json" }
+                                                );
+                                                const url =
+                                                    URL.createObjectURL(blob);
+                                                const a =
+                                                    document.createElement("a");
+                                                a.href = url;
+                                                a.download =
+                                                    "grade-result.json";
+                                                document.body.appendChild(a);
+                                                a.click();
+                                                a.remove();
+                                                URL.revokeObjectURL(url);
+                                            } catch {
+                                                setError(
+                                                    "Could not download JSON file."
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        Download JSON
+                                    </Button>
+                                </div>
+                            </div>
+                            <details className="mt-3">
+                                <summary className="cursor-pointer text-sm text-muted-foreground">
+                                    Toggle JSON view
+                                </summary>
+                                <pre className="mt-3 max-h-80 overflow-auto rounded bg-muted p-3 text-xs">
+                                    {JSON.stringify(result, null, 2)}
+                                </pre>
+                            </details>
+                        </div>
+                    </section>
+                )}
             </div>
         </main>
     );
