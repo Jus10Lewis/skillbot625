@@ -88,10 +88,7 @@ const TutorCard = ({
                 />
                 <p className="text-sm">{duration} minutes</p>
             </div>
-            <Link
-                href={`/all-community-tutors/${id}`}
-                className="tutor-card-link"
-            >
+            <Link href={`/ai-tutors/community/${id}`} className="tutor-card-link">
                 <button className="btn-primary w-full justify-center">
                     Launch Tutor
                 </button>

@@ -65,7 +65,7 @@ const TutorsList = ({
                                 {/* Use session_id if available, otherwise fall back to id */}
                                 <TableCell>
                                     <Link
-                                        href={`/all-community-tutors/${id}`}
+                                        href={`/ai-tutors/community/${id}`}
                                         className="flex items-center gap-2"
                                     >
                                         <div className="flex items-center gap-2">

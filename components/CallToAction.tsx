@@ -4,7 +4,7 @@ import Link from "next/link";
 const CallToAction = () => {
     return (
         <section className="cta-section">
-            <Link href="/all-community-tutors/new">
+            <Link href="/ai-tutors/new">
                 <div className="cta-badge">Start learning your way.</div>
             </Link>
 
@@ -28,7 +28,7 @@ const CallToAction = () => {
                     width={12}
                     height={12}
                 />
-                <Link href="/all-community-tutors/new">
+                <Link href="/ai-tutors/new">
                     <p>Build a New Tutor</p>
                 </Link>
             </button>

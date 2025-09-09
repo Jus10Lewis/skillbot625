@@ -8,8 +8,8 @@ const navItems = [
     { href: "/", label: "Home" },
     { href: "/ai-tutors", label: "AI Tutors" },
     { href: "/teacher", label: "Teacher Dashboard" },
-    { href: "/all-community-tutors", label: "Community" },
-    { href: "/my-tutors", label: "My Tutors" },
+    { href: "/ai-tutors/community", label: "Community" },
+    { href: "/ai-tutors/history", label: "History" },
     { href: "/subscription", label: "Pricing" },
 ];
 
