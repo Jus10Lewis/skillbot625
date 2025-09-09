@@ -1,6 +1,6 @@
 "use client";
-// Usage: Set OPENAI_API_KEY in .env.local, then use this page to submit the grading form.
-// This page posts to /api/grade and renders the structured JSON results.
+// This page was moved from /teacher/grading to /teacher/basic.
+// Basic grading prototype: Set OPENAI_API_KEY in .env.local, then use this page to submit the grading form.
 
 import { useEffect, useMemo, useState } from "react";
 import type { GradeRequest, GradeResponse, ApiError } from "@/types/grading";
@@ -40,19 +40,17 @@ const Schema = z.object({
     dataInput: z.string(),
 });
 
-// Use the input type for React Hook Form to align with resolver generics
 type FormValues = z.input<typeof Schema>;
 
 const STORAGE_KEY = "gradingForm.v1";
 
-export default function GradingPage() {
+export default function BasicGradingPage() {
     const persistedDefaults: FormValues | undefined = useMemo(() => {
         if (typeof window === "undefined") return undefined;
         try {
             const raw = window.localStorage.getItem(STORAGE_KEY);
             if (!raw) return undefined;
             const parsed = JSON.parse(raw) as Partial<FormValues>;
-            // Validate shape loosely; fall back on undefined to use defaults below.
             return {
                 instructions: parsed.instructions ?? "",
                 rubric: parsed.rubric ?? "",
@@ -85,7 +83,6 @@ export default function GradingPage() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<GradeResponse | null>(null);
 
-    // Persist to localStorage when values change
     const watched = watch();
     useEffect(() => {
         try {
@@ -98,9 +95,7 @@ export default function GradingPage() {
                 dataInput: watched.dataInput ?? "",
             };
             window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-        } catch {
-            // ignore persistence errors
-        }
+        } catch {}
     }, [
         watched.instructions,
         watched.rubric,
@@ -146,7 +141,6 @@ export default function GradingPage() {
     };
 
     const onInvalid = () => {
-        // If studentCode invalid, ensure our exact message is visible (it already is via schema)
         setError(null);
     };
 
@@ -160,9 +154,7 @@ export default function GradingPage() {
         });
         try {
             window.localStorage.removeItem(STORAGE_KEY);
-        } catch {
-            // ignore
-        }
+        } catch {}
         setError(null);
         setResult(null);
     };
@@ -171,10 +163,10 @@ export default function GradingPage() {
         <main>
             <div className="max-w-4xl w-full mx-auto">
                 <header className="mb-6">
-                    <h1 className="mb-2">Grading</h1>
+                    <h1 className="mb-2">Basic Grading</h1>
                     <p className="text-muted-foreground">
-                        Fill in the details below and submit to grade with
-                        OpenAI.
+                        Prototype grading form. Fill details and submit to grade
+                        with OpenAI.
                     </p>
                 </header>
 
@@ -254,7 +246,6 @@ export default function GradingPage() {
                                             {...field}
                                         />
                                     </FormControl>
-                                    {/* Ensure exact message for empty/whitespace via schema */}
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -337,7 +328,6 @@ export default function GradingPage() {
                     </form>
                 </Form>
 
-                {/* Results */}
                 {result && (
                     <section className="mt-8 space-y-4">
                         <div className="rounded-md border p-4">
@@ -396,7 +386,6 @@ export default function GradingPage() {
                                 </div>
                             )}
 
-                        {/* Raw JSON output */}
                         <div className="rounded-md border p-4">
                             <div className="flex items-center justify-between gap-3 flex-wrap">
                                 <h3 className="font-semibold">Raw JSON</h3>

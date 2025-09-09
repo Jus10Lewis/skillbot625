@@ -109,7 +109,7 @@ const NavItems = () => {
                 )}
             </div>
 
-            {/* Teacher Dashboard (kept separate) */}
+            {/* Teacher Tools section */}
             <Link
                 href="/teacher"
                 className={cn(
@@ -118,7 +118,7 @@ const NavItems = () => {
                         "text-primary font-semibold"
                 )}
             >
-                Teacher Dashboard
+                Teacher Tools
             </Link>
 
             {/* Pricing */}
