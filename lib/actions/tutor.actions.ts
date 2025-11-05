@@ -206,7 +206,8 @@ export const addToSessionHistory = async (tutorId: string) => {
     const supabase = createSupabaseClient();
     const { data, error } = await supabase
         .from("session_history")
-        .insert({ tutor_id: tutorId, user_id: userId });
+        .insert({ tutor_id: tutorId, user_id: userId })
+        .select();
 
     if (error) throw new Error(error.message);
     return data;
@@ -362,3 +363,113 @@ export const getBookmarkedTutors = async (userId: string, limit = 10) => {
         });
 };
 // END BOOKMARKS DB TABLE
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// USAGE TRACKING
+// Free tier limits
+const DAILY_LIMIT_MINUTES = 30;
+const MONTHLY_LIMIT_MINUTES = 150;
+
+export const updateSessionDuration = async (
+    sessionHistoryId: string,
+    durationSeconds: number
+) => {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+        .from("session_history")
+        .update({ call_duration_seconds: durationSeconds })
+        .eq("id", sessionHistoryId);
+
+    if (error) throw new Error(error.message);
+    return data;
+};
+
+export const getUserUsageMinutes = async (userId: string) => {
+    const supabase = createSupabaseClient();
+
+    // Get today's date at midnight (start of day)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Get first day of current month
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // Get daily usage
+    const { data: dailyData, error: dailyError } = await supabase
+        .from("session_history")
+        .select("call_duration_seconds")
+        .eq("user_id", userId)
+        .gte("created_at", today.toISOString());
+
+    if (dailyError) throw new Error(dailyError.message);
+
+    // Get monthly usage
+    const { data: monthlyData, error: monthlyError } = await supabase
+        .from("session_history")
+        .select("call_duration_seconds")
+        .eq("user_id", userId)
+        .gte("created_at", firstDayOfMonth.toISOString());
+
+    if (monthlyError) throw new Error(monthlyError.message);
+
+    const dailySeconds =
+        dailyData?.reduce(
+            (sum, session) => sum + (session.call_duration_seconds || 0),
+            0
+        ) || 0;
+    const monthlySeconds =
+        monthlyData?.reduce(
+            (sum, session) => sum + (session.call_duration_seconds || 0),
+            0
+        ) || 0;
+
+    return {
+        dailyMinutes: Math.round(dailySeconds / 60),
+        monthlyMinutes: Math.round(monthlySeconds / 60),
+        dailyLimit: DAILY_LIMIT_MINUTES,
+        monthlyLimit: MONTHLY_LIMIT_MINUTES,
+    };
+};
+
+export const canStartVapiCall = async () => {
+    const { userId, has } = await auth();
+
+    if (!userId) {
+        throw new Error("User must be authenticated to start a call");
+    }
+
+    // Pro users have unlimited usage
+    if (has({ plan: "pro" })) {
+        return {
+            canStart: true,
+            reason: null,
+            usage: null,
+        };
+    }
+
+    // Free users have limits
+    const usage = await getUserUsageMinutes(userId);
+
+    if (usage.dailyMinutes >= DAILY_LIMIT_MINUTES) {
+        return {
+            canStart: false,
+            reason: "daily",
+            usage,
+        };
+    }
+
+    if (usage.monthlyMinutes >= MONTHLY_LIMIT_MINUTES) {
+        return {
+            canStart: false,
+            reason: "monthly",
+            usage,
+        };
+    }
+
+    return {
+        canStart: true,
+        reason: null,
+        usage,
+    };
+};
+// END USAGE TRACKING

@@ -59,3 +59,20 @@ export const configureAssistant = (voice: string, style: string) => {
     };
     return vapiAssistant;
 };
+
+// Usage limits for VAPI calls
+export const MAX_CALL_DURATION_MINUTES = 60;
+
+export const checkCallDuration = (
+    startTime: number
+): { shouldEnd: boolean; durationMinutes: number } => {
+    const durationMs = Date.now() - startTime;
+    const durationMinutes = Math.floor(durationMs / 60000);
+
+    // Check if call has exceeded max duration
+    if (durationMinutes >= MAX_CALL_DURATION_MINUTES) {
+        return { shouldEnd: true, durationMinutes };
+    }
+
+    return { shouldEnd: false, durationMinutes };
+};
