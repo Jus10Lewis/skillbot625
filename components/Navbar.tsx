@@ -12,7 +12,7 @@ import {
 const Navbar = () => {
     return (
         <nav className="navbar">
-            <Link href="/">
+            <Link href="/ai-tutors">
                 <Image
                     src="/images/full-logo.png"
                     alt="Logo"

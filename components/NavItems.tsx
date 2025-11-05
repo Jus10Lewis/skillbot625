@@ -8,7 +8,17 @@ import { cn } from "@/lib/utils";
 const NavItems = () => {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+    // Fix for hydration mismatch: Wait until component mounts on client before applying active styles
+    // Hydration is when React attaches to server-rendered HTML. If server HTML differs from client HTML,
+    // React throws an error. By using 'mounted' state, we ensure server and client render identical HTML
+    // initially (no active styles), then apply active styles only after client-side hydration completes.
+    // This prevents the mismatch between server (no pathname) and client (has pathname from usePathname).
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -24,7 +34,7 @@ const NavItems = () => {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
-    const aiTutorsActive = pathname.startsWith("/ai-tutors");
+    const aiTutorsActive = mounted && pathname.startsWith("/ai-tutors");
 
     const linkBase = "transition-colors hover:text-primary";
 
@@ -32,10 +42,12 @@ const NavItems = () => {
         <nav className="flex items-center gap-4">
             {/* Home */}
             <Link
-                href="/"
+                href="/ai-tutors"
                 className={cn(
                     linkBase,
-                    pathname === "/" && "text-primary font-semibold"
+                    mounted &&
+                        pathname === "/ai-tutors" &&
+                        "text-primary font-semibold"
                 )}
             >
                 Home
@@ -74,7 +86,8 @@ const NavItems = () => {
                             onClick={() => setOpen(false)}
                             className={cn(
                                 "block px-4 py-2 hover:bg-gray-100",
-                                pathname === "/ai-tutors" &&
+                                mounted &&
+                                    pathname === "/ai-tutors" &&
                                     "bg-gray-100 font-medium text-primary"
                             )}
                             role="menuitem"
@@ -86,7 +99,10 @@ const NavItems = () => {
                             onClick={() => setOpen(false)}
                             className={cn(
                                 "block px-4 py-2 hover:bg-gray-100",
-                                pathname.startsWith("/ai-tutors/community") &&
+                                mounted &&
+                                    pathname.startsWith(
+                                        "/ai-tutors/community"
+                                    ) &&
                                     "bg-gray-100 font-medium text-primary"
                             )}
                             role="menuitem"
@@ -98,7 +114,8 @@ const NavItems = () => {
                             onClick={() => setOpen(false)}
                             className={cn(
                                 "block px-4 py-2 hover:bg-gray-100",
-                                pathname.startsWith("/ai-tutors/history") &&
+                                mounted &&
+                                    pathname.startsWith("/ai-tutors/history") &&
                                     "bg-gray-100 font-medium text-primary"
                             )}
                             role="menuitem"
@@ -111,10 +128,11 @@ const NavItems = () => {
 
             {/* Teacher Tools section */}
             <Link
-                href="/teacher"
+                href="/coming-soon"
                 className={cn(
                     linkBase,
-                    pathname.startsWith("/teacher") &&
+                    mounted &&
+                        pathname.startsWith("/coming-soon") &&
                         "text-primary font-semibold"
                 )}
             >
@@ -126,7 +144,9 @@ const NavItems = () => {
                 href="/subscription"
                 className={cn(
                     linkBase,
-                    pathname === "/subscription" && "text-primary font-semibold"
+                    mounted &&
+                        pathname === "/subscription" &&
+                        "text-primary font-semibold"
                 )}
             >
                 Pricing
