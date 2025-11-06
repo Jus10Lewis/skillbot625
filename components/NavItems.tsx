@@ -42,12 +42,10 @@ const NavItems = () => {
         <nav className="flex items-center gap-4">
             {/* Home */}
             <Link
-                href="/ai-tutors"
+                href="/"
                 className={cn(
                     linkBase,
-                    mounted &&
-                        pathname === "/ai-tutors" &&
-                        "text-primary font-semibold"
+                    mounted && pathname === "/" && "text-primary font-semibold"
                 )}
             >
                 Home
