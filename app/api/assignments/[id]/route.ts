@@ -4,7 +4,7 @@ import { createSupabaseClient } from "@/lib/supabase";
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         // Check authentication
@@ -16,7 +16,7 @@ export async function PATCH(
             );
         }
 
-        const { id } = params;
+        const { id } = await params;
 
         // Parse request body
         const body = await request.json();
