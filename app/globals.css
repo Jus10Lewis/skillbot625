@@ -177,6 +177,9 @@ body {
     .btn-primary {
         @apply bg-primary text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2;
     }
+    .btn-secondary {
+        @apply border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-xl cursor-pointer px-4 py-2 flex items-center gap-2 transition-colors;
+    }
     .navbar {
         @apply flex items-center justify-between mx-auto w-full px-14 py-2 bg-white max-sm:px-4;
     }

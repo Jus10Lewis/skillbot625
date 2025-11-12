@@ -126,11 +126,11 @@ const NavItems = () => {
 
             {/* Teacher Tools section */}
             <Link
-                href="/coming-soon"
+                href="/teacher"
                 className={cn(
                     linkBase,
                     mounted &&
-                        pathname.startsWith("/coming-soon") &&
+                        pathname.startsWith("/teacher") &&
                         "text-primary font-semibold"
                 )}
             >
