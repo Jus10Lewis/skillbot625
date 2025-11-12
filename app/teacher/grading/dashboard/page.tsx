@@ -22,7 +22,7 @@ export default async function GradingDashboardPage() {
         language: string;
         created_at: string;
     }> = [];
-    
+
     if (session.userId) {
         const supabase = createSupabaseClient();
         const { data } = await supabase
@@ -113,7 +113,9 @@ export default async function GradingDashboardPage() {
 
             <section>
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h2 className="text-xl font-semibold">Recent Assignments</h2>
+                    <h2 className="text-xl font-semibold">
+                        Recent Assignments
+                    </h2>
                     <Link
                         href="#"
                         className="text-sm text-primary hover:underline"
@@ -143,17 +145,13 @@ export default async function GradingDashboardPage() {
                                             {assignment.title}
                                         </p>
                                         <div className="flex gap-3 text-xs text-muted-foreground mt-1">
-                                            <span>
-                                                Created {createdDate}
-                                            </span>
+                                            <span>Created {createdDate}</span>
                                             {assignment.class && (
                                                 <span>
                                                     • {assignment.class}
                                                 </span>
                                             )}
-                                            <span>
-                                                • {assignment.language}
-                                            </span>
+                                            <span>• {assignment.language}</span>
                                             <span>
                                                 • {assignment.total_points} pts
                                             </span>
@@ -190,9 +188,7 @@ export default async function GradingDashboardPage() {
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
-                            <p className="font-medium">
-                                No assignments yet
-                            </p>
+                            <p className="font-medium">No assignments yet</p>
                             <p className="mt-2">
                                 Create your first assignment to get started!
                             </p>
