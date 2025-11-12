@@ -45,20 +45,18 @@ export default function SingleStudentGradeForm({
             return;
         }
 
-        // Prepare request body for GPT grading
+        // Prepare request body for GPT grading API
         const requestBody = {
-            assignmentId: assignment.id,
-            studentName,
-            studentCode,
+            language: assignment.language,
             instructions: assignment.instructions,
             rubric: assignment.rubric,
-            language: assignment.language,
-            totalPoints: assignment.totalPoints,
+            studentCode: studentCode,
+            dataInput: "", // Optional field for test data/input
         };
 
         try {
-            // TODO: This will call the GPT API endpoint
-            const response = await fetch("/api/grading/grade", {
+            // Step 1: Call the GPT grading API
+            const gradeResponse = await fetch("/api/grade", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -66,18 +64,44 @@ export default function SingleStudentGradeForm({
                 body: JSON.stringify(requestBody),
             });
 
-            const data = await response.json();
+            const gradeData = await gradeResponse.json();
 
-            if (!response.ok || !data.success) {
-                setError(data.error || "Failed to grade submission");
+            if (!gradeResponse.ok) {
+                setError(gradeData.error || "Failed to grade submission");
+                setIsSubmitting(false);
+                return;
+            }
+
+            // Step 2: Save the submission to database
+            const submissionResponse = await fetch("/api/submissions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    assignmentId: assignment.id,
+                    studentName,
+                    studentCode,
+                    gradeResponse: gradeData,
+                    language: assignment.language,
+                    totalPoints: assignment.totalPoints,
+                }),
+            });
+
+            const submissionData = await submissionResponse.json();
+
+            if (!submissionResponse.ok || !submissionData.success) {
+                setError(
+                    submissionData.error || "Failed to save graded submission"
+                );
                 setIsSubmitting(false);
                 return;
             }
 
             // Success! Redirect to the results page
-            // For now, we'll redirect back to the assignment page
-            // Later this will go to a results page showing the grade
-            router.push(`/teacher/grading/assignments/${assignment.id}`);
+            router.push(
+                `/teacher/grading/assignments/${assignment.id}/results/${submissionData.submission.id}`
+            );
         } catch (err) {
             console.error("Error grading submission:", err);
             setError("An unexpected error occurred. Please try again.");

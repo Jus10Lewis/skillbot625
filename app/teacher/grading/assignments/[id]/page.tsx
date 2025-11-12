@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 export default async function AssignmentDetailsPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
-    const { id } = params;
+    const { id } = await params;
     const session = await auth();
 
     if (!session.userId) {
@@ -47,6 +47,25 @@ export default async function AssignmentDetailsPage({
         language: assignment.language,
         createdAt: assignment.created_at,
     };
+
+    // Fetch submissions for this assignment
+    const { data: submissionsData } = await supabase
+        .from("submissions")
+        .select("*")
+        .eq("assignment_id", id)
+        .eq("user_id", session.userId)
+        .order("created_at", { ascending: false });
+
+    const submissions = submissionsData
+        ? submissionsData.map((sub) => ({
+              id: sub.id,
+              assignmentId: sub.assignment_id,
+              studentName: sub.student_name,
+              grade: sub.grade,
+              totalPoints: sub.total_points,
+              createdAt: sub.created_at,
+          }))
+        : [];
 
     // Format dates
     const createdDate = new Date(assignmentData.createdAt).toLocaleDateString(
@@ -208,29 +227,113 @@ export default async function AssignmentDetailsPage({
                 </div>
 
                 <div className="rounded-lg border bg-white">
-                    {/* TODO: Fetch and display graded submissions */}
-                    {/* Empty state for now */}
-                    <div className="p-8 text-center text-muted-foreground text-sm">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            />
-                        </svg>
-                        <p className="font-medium">No submissions graded yet</p>
-                        <p className="mt-2">
-                            Click &ldquo;Grade New Submission&rdquo; to start
-                            grading student work.
-                        </p>
-                    </div>
+                    {submissions.length === 0 ? (
+                        <div className="p-8 text-center text-muted-foreground text-sm">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                            <p className="font-medium">
+                                No submissions graded yet
+                            </p>
+                            <p className="mt-2">
+                                Click &ldquo;Grade New Submission&rdquo; to
+                                start grading student work.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50 border-b">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Student Name
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Grade
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Percentage
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Graded On
+                                        </th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {submissions.map((submission) => {
+                                        const percentage =
+                                            (submission.grade /
+                                                submission.totalPoints) *
+                                            100;
+                                        const gradeColor =
+                                            percentage >= 90
+                                                ? "text-green-600"
+                                                : percentage >= 80
+                                                ? "text-blue-600"
+                                                : percentage >= 70
+                                                ? "text-yellow-600"
+                                                : "text-red-600";
+
+                                        return (
+                                            <tr
+                                                key={submission.id}
+                                                className="hover:bg-gray-50"
+                                            >
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {submission.studentName}
+                                                </td>
+                                                <td
+                                                    className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${gradeColor}`}
+                                                >
+                                                    {submission.grade} /{" "}
+                                                    {submission.totalPoints}
+                                                </td>
+                                                <td
+                                                    className={`px-6 py-4 whitespace-nowrap text-sm font-semibold ${gradeColor}`}
+                                                >
+                                                    {percentage.toFixed(1)}%
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {new Date(
+                                                        submission.createdAt
+                                                    ).toLocaleDateString(
+                                                        "en-US",
+                                                        {
+                                                            year: "numeric",
+                                                            month: "short",
+                                                            day: "numeric",
+                                                        }
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <Link
+                                                        href={`/teacher/grading/assignments/${id}/results/${submission.id}`}
+                                                        className="text-blue-600 hover:text-blue-900"
+                                                    >
+                                                        View Details
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </section>
         </main>

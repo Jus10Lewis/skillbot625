@@ -61,3 +61,33 @@ export interface CreateAssignmentResponse {
     assignment?: Assignment;
     error?: string;
 }
+
+// Submission types
+export interface Submission {
+    id: string;
+    assignmentId: string;
+    userId: string;
+    studentName: string;
+    submittedCode: string;
+    language: string;
+    grade: number;
+    totalPoints: number;
+    feedback: GradeResponse; // Store the full GPT response
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateSubmissionRequest {
+    assignmentId: string;
+    studentName: string;
+    studentCode: string;
+    gradeResponse: GradeResponse;
+    language: string;
+    totalPoints: number;
+}
+
+export interface CreateSubmissionResponse {
+    success: boolean;
+    submission?: Submission;
+    error?: string;
+}

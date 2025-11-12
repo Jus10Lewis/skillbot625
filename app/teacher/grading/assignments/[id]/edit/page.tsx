@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 export default async function EditAssignmentPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
-    const { id } = params;
+    const { id } = await params;
     const session = await auth();
 
     if (!session.userId) {
