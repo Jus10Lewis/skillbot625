@@ -496,7 +496,9 @@ export default function LandingPage() {
                 <div className="mx-auto max-w-6xl px-4 py-12">
                     <div className="grid gap-8 md:grid-cols-4">
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-bold mb-3">Teach.onl</h3>
+                            <h3 className="text-lg font-bold mb-3">
+                                Teach.onl
+                            </h3>
                             <p className="text-sm text-gray-600 mb-4 max-w-sm">
                                 AI-powered programming assignment grader that
                                 helps educators save time and provide
