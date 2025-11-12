@@ -31,3 +31,33 @@ export interface ApiError {
     error: string;
     details?: unknown;
 }
+
+// Assignment types
+export interface Assignment {
+    id: string;
+    title: string;
+    class?: string;
+    dueDate?: string;
+    totalPoints: number;
+    instructions: string;
+    rubric: string;
+    language: string;
+    createdAt: string;
+    userId: string;
+}
+
+export interface CreateAssignmentRequest {
+    title: string;
+    class?: string;
+    dueDate?: string;
+    totalPoints: number;
+    instructions: string;
+    rubric: string;
+    language: string;
+}
+
+export interface CreateAssignmentResponse {
+    success: boolean;
+    assignment?: Assignment;
+    error?: string;
+}
