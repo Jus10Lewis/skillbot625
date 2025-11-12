@@ -69,16 +69,42 @@ export default async function ResultsPage({ params }: ResultsPageProps) {
                 >
                     ← Back to Assignment
                 </Link>
-                <h1 className="text-3xl font-bold mb-2">Grading Results</h1>
-                <div className="text-gray-600">
-                    <div className="font-medium">{assignmentTitle}</div>
-                    <div className="text-sm">
-                        Student: {submission.studentName}
+                <div className="flex items-start justify-between gap-4 mb-2">
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2">
+                            Grading Results
+                        </h1>
+                        <div className="text-gray-600">
+                            <div className="font-medium">{assignmentTitle}</div>
+                            <div className="text-sm">
+                                Student: {submission.studentName}
+                            </div>
+                            <div className="text-sm">
+                                Graded on:{" "}
+                                {new Date(
+                                    submission.createdAt
+                                ).toLocaleString()}
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-sm">
-                        Graded on:{" "}
-                        {new Date(submission.createdAt).toLocaleString()}
-                    </div>
+                    <Link
+                        href={`/teacher/grading/assignments/${id}/grade/single`}
+                        className="btn-primary text-sm flex-shrink-0"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path
+                                fillRule="evenodd"
+                                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                clipRule="evenodd"
+                            />
+                        </svg>
+                        Grade Another Student
+                    </Link>
                 </div>
             </div>
 
