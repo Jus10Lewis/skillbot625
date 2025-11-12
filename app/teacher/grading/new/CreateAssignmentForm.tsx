@@ -166,8 +166,8 @@ DEDUCTIONS
                 return;
             }
 
-            // Success! Redirect to assignments page
-            router.push("/teacher/grading/assignments");
+            // Success! Redirect to the new assignment's detail page
+            router.push(`/teacher/grading/assignments/${data.assignment.id}`);
         } catch (err) {
             console.error("Error creating assignment:", err);
             setError("An unexpected error occurred. Please try again.");

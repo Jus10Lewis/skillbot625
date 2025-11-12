@@ -1,13 +1,40 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { createSupabaseClient } from "@/lib/supabase";
+import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
     title: "Grading Dashboard",
     description: "High-level view of assignments and grading history.",
 };
 
-// Static grading dashboard placeholder
-export default function GradingDashboardPage() {
+// Grading dashboard with real data
+export default async function GradingDashboardPage() {
+    const session = await auth();
+
+    // Fetch assignments if user is authenticated
+    let assignments: Array<{
+        id: string;
+        title: string;
+        class: string | null;
+        due_date: string | null;
+        total_points: number;
+        language: string;
+        created_at: string;
+    }> = [];
+    
+    if (session.userId) {
+        const supabase = createSupabaseClient();
+        const { data } = await supabase
+            .from("assignments")
+            .select("*")
+            .eq("user_id", session.userId)
+            .order("created_at", { ascending: false })
+            .limit(5);
+
+        assignments = data || [];
+    }
+
     return (
         <main className="mx-auto max-w-5xl px-4 py-16">
             <div className="mb-8">
@@ -16,30 +43,11 @@ export default function GradingDashboardPage() {
                     High-level view of assignments and grading history
                 </p>
 
-                {/* Main Action Buttons */}
+                {/* Main Action Button */}
                 <div className="flex gap-4 flex-wrap">
                     <Link
-                        href="/teacher/grading/assignments"
-                        className="btn-primary inline-flex items-center gap-2"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                        >
-                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                            <path
-                                fillRule="evenodd"
-                                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                        View Previously Created Assignments
-                    </Link>
-                    <Link
                         href="/teacher/grading/new"
-                        className="btn-secondary inline-flex items-center gap-2"
+                        className="btn-primary inline-flex items-center gap-2"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +113,7 @@ export default function GradingDashboardPage() {
 
             <section>
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                    <h2 className="text-xl font-semibold">Past Assignments</h2>
+                    <h2 className="text-xl font-semibold">Recent Assignments</h2>
                     <Link
                         href="#"
                         className="text-sm text-primary hover:underline"
@@ -114,43 +122,82 @@ export default function GradingDashboardPage() {
                     </Link>
                 </div>
                 <div className="rounded-lg border divide-y bg-white/50">
-                    {/* Placeholder rows */}
-                    <Link
-                        href="/teacher/grading/8675309"
-                        className="p-4 flex items-center justify-between flex-wrap gap-4 hover:bg-muted/40 transition-colors"
-                    >
-                        <div>
-                            <p className="font-medium">Assignment #8675309</p>
-                            <p className="text-xs text-muted-foreground">
-                                Created —
+                    {assignments.length > 0 ? (
+                        assignments.map((assignment) => {
+                            const createdDate = new Date(
+                                assignment.created_at
+                            ).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                            });
+
+                            return (
+                                <Link
+                                    key={assignment.id}
+                                    href={`/teacher/grading/assignments/${assignment.id}`}
+                                    className="p-4 flex items-center justify-between flex-wrap gap-4 hover:bg-muted/40 transition-colors"
+                                >
+                                    <div>
+                                        <p className="font-medium">
+                                            {assignment.title}
+                                        </p>
+                                        <div className="flex gap-3 text-xs text-muted-foreground mt-1">
+                                            <span>
+                                                Created {createdDate}
+                                            </span>
+                                            {assignment.class && (
+                                                <span>
+                                                    • {assignment.class}
+                                                </span>
+                                            )}
+                                            <span>
+                                                • {assignment.language}
+                                            </span>
+                                            <span>
+                                                • {assignment.total_points} pts
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-5 w-5 text-muted-foreground"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                </Link>
+                            );
+                        })
+                    ) : (
+                        <div className="p-8 text-center text-muted-foreground text-sm">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                            </svg>
+                            <p className="font-medium">
+                                No assignments yet
+                            </p>
+                            <p className="mt-2">
+                                Create your first assignment to get started!
                             </p>
                         </div>
-                        <span className="text-xs rounded-full bg-muted px-3 py-1">
-                            In Progress
-                        </span>
-                    </Link>
-                    <div className="p-4 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <p className="font-medium">— Assignment Title</p>
-                            <p className="text-xs text-muted-foreground">
-                                Created —
-                            </p>
-                        </div>
-                        <span className="text-xs rounded-full bg-muted px-3 py-1">
-                            Grading Complete
-                        </span>
-                    </div>
-                    <div className="p-4 flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <p className="font-medium">— Assignment Title</p>
-                            <p className="text-xs text-muted-foreground">
-                                Created —
-                            </p>
-                        </div>
-                        <span className="text-xs rounded-full bg-muted px-3 py-1">
-                            Awaiting Review
-                        </span>
-                    </div>
+                    )}
                 </div>
             </section>
 
