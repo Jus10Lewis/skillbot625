@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { CreateAssignmentRequest } from "@/types/grading";
@@ -9,6 +9,87 @@ export default function CreateAssignmentForm() {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const formRef = useRef<HTMLFormElement>(null);
+
+    const fillTestData = () => {
+        if (!formRef.current) return;
+
+        const timestamp = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace(/[-:]/g, "")
+            .replace("T", "-");
+        const form = formRef.current;
+
+        // Get form elements
+        const titleInput = form.querySelector<HTMLInputElement>("#title");
+        const classInput = form.querySelector<HTMLInputElement>("#class");
+        const dueDateInput = form.querySelector<HTMLInputElement>("#dueDate");
+        const totalPointsInput =
+            form.querySelector<HTMLInputElement>("#totalPoints");
+        const instructionsInput =
+            form.querySelector<HTMLTextAreaElement>("#instructions");
+        const rubricInput = form.querySelector<HTMLTextAreaElement>("#rubric");
+        const languageSelect =
+            form.querySelector<HTMLSelectElement>("#language");
+
+        // Fill in test data
+        if (titleInput) titleInput.value = `Test Assignment ${timestamp}`;
+        if (classInput) classInput.value = "CS 101 - Test Section";
+        if (dueDateInput) {
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            dueDateInput.value = nextWeek.toISOString().split("T")[0];
+        }
+        if (totalPointsInput) totalPointsInput.value = "100";
+        if (languageSelect) languageSelect.value = "python";
+
+        if (instructionsInput) {
+            instructionsInput.value = `Write a Python function called "bubble_sort" that implements the bubble sort algorithm.
+
+Requirements:
+- Function should take a list of integers as input
+- Function should return a new sorted list (do not modify the original list)
+- Include a main() function that demonstrates your bubble_sort function with at least 3 test cases
+- Add comments explaining the key steps of your algorithm
+- Handle edge cases (empty list, single element, already sorted list)
+
+Example usage:
+    numbers = [64, 34, 25, 12, 22, 11, 90]
+    sorted_numbers = bubble_sort(numbers)
+    print(sorted_numbers)  # [11, 12, 22, 25, 34, 64, 90]
+
+Submit your code as a single .py file with clear documentation.`;
+        }
+
+        if (rubricInput) {
+            rubricInput.value = `Grading Rubric (Total: 100 points)
+
+CORRECTNESS (50 points)
+- Algorithm correctly implements bubble sort: 25 points
+- Returns a new list without modifying original: 10 points
+- Handles all edge cases correctly: 15 points
+  * Empty list: 5 points
+  * Single element: 5 points
+  * Already sorted list: 5 points
+
+CODE QUALITY (30 points)
+- Proper function definition and parameters: 10 points
+- Clear and descriptive variable names: 8 points
+- Appropriate comments explaining algorithm steps: 7 points
+- Main function with test cases included: 5 points
+
+STYLE & BEST PRACTICES (20 points)
+- Follows PEP 8 style guidelines: 10 points
+- Code is clean and readable: 5 points
+- Proper indentation and spacing: 5 points
+
+DEDUCTIONS
+- Missing docstrings: -5 points
+- Modifies original list instead of creating new one: -10 points
+- Code does not run without errors: -20 points`;
+        }
+    };
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -95,7 +176,36 @@ export default function CreateAssignmentForm() {
     };
 
     return (
-        <form className="grid gap-6" onSubmit={handleSubmit}>
+        <form ref={formRef} className="grid gap-6" onSubmit={handleSubmit}>
+            {/* Development Test Button */}
+            <div className="p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                <div className="flex items-center justify-between gap-4">
+                    <div>
+                        <p className="text-sm font-medium text-yellow-900">
+                            Development Mode
+                        </p>
+                        <p className="text-xs text-yellow-700">
+                            Fill form with test data for quick testing
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={fillTestData}
+                        className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        >
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                        Fill Test Data
+                    </button>
+                </div>
+            </div>
+
             {/* Error message */}
             {error && (
                 <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
