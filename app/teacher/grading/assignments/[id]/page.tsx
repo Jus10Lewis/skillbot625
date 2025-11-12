@@ -188,7 +188,7 @@ export default async function AssignmentDetailsPage({
                         Graded Submissions
                     </h2>
                     <Link
-                        href={`/teacher/grading/${id}/submit`}
+                        href={`/teacher/grading/assignments/${id}/grade`}
                         className="btn-primary text-sm"
                     >
                         <svg
