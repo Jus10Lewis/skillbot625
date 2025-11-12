@@ -46,10 +46,10 @@ const Navbar = () => {
                         className="transition-transform group-hover:scale-105"
                     />
                     <div className="flex flex-col leading-tight max-sm:hidden">
-                        <span className="text-2xl font-bold text-primary">
-                            Teach.onl
+                        <span className="text-3xl font-extrabold tracking-tight text-primary">
+                            Teach<span className="text-purple-600">.onl</span>
                         </span>
-                        <span className="text-sm text-gray-500 font-medium">
+                        <span className="text-xs text-gray-500 font-semibold tracking-wide uppercase">
                             AI Teaching Tools
                         </span>
                     </div>
