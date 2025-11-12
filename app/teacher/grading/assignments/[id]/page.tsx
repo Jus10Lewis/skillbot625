@@ -125,24 +125,40 @@ export default async function AssignmentDetailsPage({
                             {dueDate && ` • Due ${dueDate}`}
                         </p>
                     </div>
-                    <Link
-                        href="/teacher/grading/dashboard"
-                        className="text-primary hover:underline text-sm flex items-center gap-1"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={`/teacher/grading/assignments/${id}/edit`}
+                            className="btn-secondary text-sm"
                         >
-                            <path
-                                fillRule="evenodd"
-                                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                                clipRule="evenodd"
-                            />
-                        </svg>
-                        Return to grading dashboard
-                    </Link>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                            Edit Assignment
+                        </Link>
+                        <Link
+                            href="/teacher/grading/dashboard"
+                            className="text-primary hover:underline text-sm flex items-center gap-1"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            Return to dashboard
+                        </Link>
+                    </div>
                 </div>
             </div>
 
