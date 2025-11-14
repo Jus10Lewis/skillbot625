@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
     return (
-        <main className="pt-24">
+        <main>
             {/* Hero */}
             <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50">
                 <div className="mx-auto max-w-6xl px-4 pt-20 pb-16">
