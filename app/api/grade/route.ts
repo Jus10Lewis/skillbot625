@@ -44,14 +44,14 @@ async function callOpenAIJSON(system: string, userPayload: GradeRequest) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             temperature: 0.2,
             response_format: { type: "json_object" },
             messages: [
                 { role: "system", content: system },
                 { role: "user", content: JSON.stringify(userPayload) },
             ],
-            max_tokens: 1200,
+            max_tokens: 2500,
         }),
     });
 
@@ -64,10 +64,12 @@ async function callOpenAIJSON(system: string, userPayload: GradeRequest) {
         throw err;
     }
     const data = await res.json();
+
     const content = data?.choices?.[0]?.message?.content;
     if (!content || typeof content !== "string") {
         throw new Error("Invalid response from OpenAI: missing content");
     }
+
     let parsed: GradeResponse;
     try {
         parsed = JSON.parse(content);
@@ -105,7 +107,11 @@ export async function POST(req: NextRequest) {
         const marker = "# Grading System Prompt";
         const idx = full.indexOf(marker);
         systemPrompt = idx >= 0 ? full.slice(idx) : full;
+
+        // Replace template variables
+        systemPrompt = systemPrompt.replace(/\$\{language\}/g, language);
     } catch (e) {
+        console.error("Failed to load prompt:", e);
         return serverError(500, "Failed to load system prompt", `${e}`);
     }
 
@@ -128,6 +134,33 @@ export async function POST(req: NextRequest) {
         ) {
             return serverError(502, "Upstream returned invalid shape");
         }
+
+        // CRITICAL: Recalculate totals ourselves because LLMs are bad at arithmetic
+        // Don't trust the AI's math - compute it from the sections array
+        if (Array.isArray(result.sections)) {
+            let earnedSum = 0;
+            let maxSum = 0;
+
+            for (const section of result.sections) {
+                const score =
+                    typeof section.score === "number" ? section.score : 0;
+                const maxPoints =
+                    typeof section.maxPoints === "number"
+                        ? section.maxPoints
+                        : 0;
+                earnedSum += score;
+                maxSum += maxPoints;
+            }
+
+            // Override the AI's total with our correct calculation
+            result.total = {
+                earned: earnedSum,
+                max: maxSum,
+                percentage:
+                    maxSum > 0 ? Math.round((earnedSum / maxSum) * 100) : 0,
+            };
+        }
+
         return NextResponse.json(result satisfies GradeResponse);
     } catch (err: unknown) {
         const anyErr = err as { status?: number; message?: string } | undefined;
