@@ -24,7 +24,6 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        // TODO: Need to switch Clerk to production mode. It's currently in development mode.
         <ClerkProvider appearance={{ variables: { colorPrimary: "#4224eb" } }}>
             <html lang="en">
                 <body

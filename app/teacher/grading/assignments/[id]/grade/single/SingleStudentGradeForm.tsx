@@ -26,6 +26,9 @@ export default function SingleStudentGradeForm({
     const [selectedGradeLevel, setSelectedGradeLevel] =
         useState<GradeLevel>("A");
 
+    // TODO: Before public launch, set SHOW_TEST_BUTTONS to false to hide development helpers
+    const SHOW_TEST_BUTTONS = true; // Set to false to hide test data buttons
+
     const getTestSubmission = (gradeLevel: GradeLevel) => {
         // Generate timestamp for unique student names
         const timestamp = new Date()
@@ -299,53 +302,55 @@ print(result)`,
             )}
 
             {/* Test Data Button */}
-            <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
-                <div className="flex items-center justify-between flex-wrap gap-3">
-                    <div>
-                        <h3 className="text-sm font-medium text-amber-900 mb-1">
-                            Development Testing
-                        </h3>
-                        <p className="text-xs text-amber-700">
-                            Fill form with simulated student submissions for
-                            testing
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <select
-                            value={selectedGradeLevel}
-                            onChange={(e) =>
-                                setSelectedGradeLevel(
-                                    e.target.value as GradeLevel
-                                )
-                            }
-                            className="border border-amber-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-                        >
-                            <option value="A">A Grade (~95%)</option>
-                            <option value="C">C Grade (~75%)</option>
-                            <option value="D">D Grade (~65%)</option>
-                        </select>
-                        <button
-                            type="button"
-                            onClick={fillTestData}
-                            className="px-4 py-2 text-sm font-medium text-amber-900 bg-amber-100 border border-amber-300 rounded-md hover:bg-amber-200 transition-colors flex items-center gap-2"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
+            {SHOW_TEST_BUTTONS && (
+                <div className="p-4 rounded-lg bg-amber-50 border border-amber-200">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div>
+                            <h3 className="text-sm font-medium text-amber-900 mb-1">
+                                Development Testing
+                            </h3>
+                            <p className="text-xs text-amber-700">
+                                Fill form with simulated student submissions for
+                                testing
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={selectedGradeLevel}
+                                onChange={(e) =>
+                                    setSelectedGradeLevel(
+                                        e.target.value as GradeLevel
+                                    )
+                                }
+                                className="border border-amber-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                             >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z"
-                                    clipRule="evenodd"
-                                />
-                            </svg>
-                            Fill Test Data
-                        </button>
+                                <option value="A">A Grade (~95%)</option>
+                                <option value="C">C Grade (~75%)</option>
+                                <option value="D">D Grade (~65%)</option>
+                            </select>
+                            <button
+                                type="button"
+                                onClick={fillTestData}
+                                className="px-4 py-2 text-sm font-medium text-amber-900 bg-amber-100 border border-amber-300 rounded-md hover:bg-amber-200 transition-colors flex items-center gap-2"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-4 w-4"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M6.672 1.911a1 1 0 10-1.932.518l.259.966a1 1 0 001.932-.518l-.26-.966zM2.429 4.74a1 1 0 10-.517 1.932l.966.259a1 1 0 00.517-1.932l-.966-.26zm8.814-.569a1 1 0 00-1.415-1.414l-.707.707a1 1 0 101.415 1.415l.707-.708zm-7.071 7.072l.707-.707A1 1 0 003.465 9.12l-.708.707a1 1 0 001.415 1.415zm3.2-5.171a1 1 0 00-1.3 1.3l4 10a1 1 0 001.823.075l1.38-2.759 3.018 3.02a1 1 0 001.414-1.415l-3.019-3.02 2.76-1.379a1 1 0 00-.076-1.822l-10-4z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                                Fill Test Data
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             <div className="grid gap-2">
                 <label className="text-sm font-medium" htmlFor="studentName">
