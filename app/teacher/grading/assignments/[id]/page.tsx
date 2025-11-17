@@ -146,6 +146,42 @@ export default async function AssignmentDetailsPage({
                     </div>
                     <div className="flex items-center gap-3">
                         <Link
+                            href={`/teacher/grading/assignments/${id}/grade`}
+                            className="btn-primary text-sm"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            Grade New Submission
+                        </Link>
+                        <a
+                            href="#graded-submissions"
+                            className="btn-secondary text-sm"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                />
+                            </svg>
+                            Jump to Grades
+                        </a>
+                        <Link
                             href={`/teacher/grading/assignments/${id}/edit`}
                             className="btn-secondary text-sm"
                         >
@@ -201,7 +237,7 @@ export default async function AssignmentDetailsPage({
             </section>
 
             {/* Previously Graded Students List */}
-            <section>
+            <section id="graded-submissions" className="scroll-mt-24">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-xl font-semibold">
                         Graded Submissions

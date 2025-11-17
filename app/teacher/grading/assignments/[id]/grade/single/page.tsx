@@ -58,7 +58,7 @@ export default async function SingleStudentGradePage({
                     </p>
                 </div>
                 <Link
-                    href={`/teacher/grading/assignments/${id}/grade`}
+                    href={`/teacher/grading/assignments/${id}`}
                     className="text-primary hover:underline text-sm flex items-center gap-1"
                 >
                     <svg
@@ -73,7 +73,7 @@ export default async function SingleStudentGradePage({
                             clipRule="evenodd"
                         />
                     </svg>
-                    Back to Grading Options
+                    Back to Assignment
                 </Link>
             </div>
 
