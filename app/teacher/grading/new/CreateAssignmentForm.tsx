@@ -317,7 +317,7 @@ DEDUCTIONS
                 <textarea
                     id="instructions"
                     name="instructions"
-                    className="border rounded-md px-3 py-2 text-sm min-h-40 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="border rounded-md px-3 py-2 text-sm min-h-64 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Enter the assignment instructions here...&#10;&#10;Example:&#10;Write a Python function that sorts a list of numbers using the bubble sort algorithm. Your function should:&#10;- Take a list of integers as input&#10;- Return the sorted list&#10;- Include comments explaining your code"
                     required
                     disabled={isSubmitting}
@@ -334,7 +334,7 @@ DEDUCTIONS
                 <textarea
                     id="rubric"
                     name="rubric"
-                    className="border rounded-md px-3 py-2 text-sm min-h-40 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="border rounded-md px-3 py-2 text-sm min-h-64 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Enter the grading rubric here...&#10;&#10;Example:&#10;Correctness (50 points):&#10;- Algorithm correctly sorts the list: 30 points&#10;- Handles edge cases (empty list, single element): 20 points&#10;&#10;Code Quality (30 points):&#10;- Proper variable naming: 10 points&#10;- Code comments and documentation: 10 points&#10;- Efficient implementation: 10 points&#10;&#10;Style (20 points):&#10;- Follows PEP 8 guidelines: 10 points&#10;- Clean, readable code: 10 points"
                     required
                     disabled={isSubmitting}

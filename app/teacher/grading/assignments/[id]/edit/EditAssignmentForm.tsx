@@ -221,7 +221,7 @@ export default function EditAssignmentForm({
                 <textarea
                     id="instructions"
                     name="instructions"
-                    className="border rounded-md px-3 py-2 text-sm min-h-40 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="border rounded-md px-3 py-2 text-sm min-h-64 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Enter the assignment instructions here..."
                     defaultValue={assignment.instructions}
                     required
@@ -239,7 +239,7 @@ export default function EditAssignmentForm({
                 <textarea
                     id="rubric"
                     name="rubric"
-                    className="border rounded-md px-3 py-2 text-sm min-h-40 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="border rounded-md px-3 py-2 text-sm min-h-64 focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Enter the grading rubric here..."
                     defaultValue={assignment.rubric}
                     required
