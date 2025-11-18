@@ -38,7 +38,7 @@ export const configureAssistant = (voice: string, style: string) => {
         },
         model: {
             provider: "openai",
-            model: "gpt-4o-mini",
+            model: "gpt-4o-mini-realtime-preview-2024-12-17",
             messages: [
                 {
                     role: "system",
