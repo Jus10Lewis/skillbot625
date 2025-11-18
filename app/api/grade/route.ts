@@ -58,6 +58,7 @@ async function callOpenAIJSON(system: string, userPayload: GradeRequest) {
         body: JSON.stringify({
             model: "gpt-5.1",
             reasoning_effort: "none", // "none" is fastest, try "low" or "medium" for more careful grading
+            verbosity: "low",
             response_format: { type: "json_object" },
             messages: [
                 { role: "system", content: system },
