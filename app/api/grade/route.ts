@@ -37,36 +37,58 @@ async function callOpenAIJSON(system: string, userPayload: GradeRequest) {
         throw new Error("Missing OPENAI_API_KEY in environment");
     }
 
+    console.log("Making OpenAI request...");
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json",
         },
+        // body: JSON.stringify({
+        //     model: "gpt-4o",
+        //     temperature: 0.2,
+        //     response_format: { type: "json_object" },
+        //     messages: [
+        //         { role: "system", content: system },
+        //         { role: "user", content: JSON.stringify(userPayload) },
+        //     ],
+        //     max_tokens: 2500,
+        // }),
+
         body: JSON.stringify({
             model: "gpt-5.1",
-            temperature: 0.2,
+            reasoning_effort: "none", // "none" is fastest, try "low" or "medium" for more careful grading
             response_format: { type: "json_object" },
             messages: [
                 { role: "system", content: system },
                 { role: "user", content: JSON.stringify(userPayload) },
             ],
-            max_tokens: 2500,
+            max_completion_tokens: 16000, // Increased to allow for reasoning tokens + actual response
         }),
     });
 
+    console.log("OpenAI response status:", res.status);
+
     if (!res.ok) {
         const text = await res.text().catch(() => "");
+        console.error("OpenAI API Error:", res.status, text);
         const err = new Error(`OpenAI error ${res.status}: ${text}`);
         // Attach status for upstream handling
         // @ts-expect-error augment
         err.status = res.status;
         throw err;
     }
+
+    console.log("Parsing OpenAI response...");
     const data = await res.json();
+    console.log("Full response data:", JSON.stringify(data, null, 2));
 
     const content = data?.choices?.[0]?.message?.content;
+    console.log("Content:", content);
+    console.log("Refusal:", data?.choices?.[0]?.message?.refusal);
+
     if (!content || typeof content !== "string") {
+        console.error("Invalid response structure:", data);
         throw new Error("Invalid response from OpenAI: missing content");
     }
 
